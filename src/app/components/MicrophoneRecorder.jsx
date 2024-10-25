@@ -7,55 +7,59 @@ const MicrophoneRecorder = ({ onTranscription }) => {
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
 
-    const toggleRecording = () => {
-        setIsRecording(prev => !prev);
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+
+            audioChunksRef.current = []; // Reset the audio chunks
+
+            recorder.ondataavailable = (event) => {
+                audioChunksRef.current.push(event.data);
+            };
+
+            recorder.onstop = () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                onTranscription(audioBlob);
+            };
+
+            recorder.onerror = (event) => {
+                console.error('Recorder error:', event.error);
+                alert('An error occurred during recording. Please try again.');
+            };
+
+            recorder.start();
+            mediaRecorderRef.current = recorder;
+        } catch (error) {
+            console.error('Error accessing the microphone:', error);
+            alert('Could not access the microphone. Please check your permissions.');
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop();
+            mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop()); // Stop all tracks
+        }
     };
 
     useEffect(() => {
-        const startRecording = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                console.log('Stream:', stream);
-                
-                const recorder = new MediaRecorder(stream);
-                console.log('Recorder:', recorder);
-                
-                audioChunksRef.current = [];
-
-                recorder.ondataavailable = event => {
-                    audioChunksRef.current.push(event.data);
-                };
-
-                recorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                    onTranscription(audioBlob);
-                };
-
-                recorder.onerror = event => {
-                    console.error('Recorder error:', event.error);
-                };
-
-                recorder.start();
-                mediaRecorderRef.current = recorder;
-            } catch (error) {
-                console.error('Error accessing the microphone:', error);
-                alert('Could not access the microphone. Please check your permissions.');
-            }
-        };
-
         if (isRecording) {
             startRecording();
-        } else if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-            mediaRecorderRef.current.stop();
+        } else {
+            stopRecording();
         }
 
         return () => {
             if (mediaRecorderRef.current) {
                 mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-                mediaRecorderRef.current = null; // Clear the reference
             }
         };
-    }, [isRecording, onTranscription]);
+    }, [isRecording]);
+
+    const toggleRecording = () => {
+        setIsRecording(prev => !prev);
+    };
 
     return (
         <div>
@@ -66,7 +70,7 @@ const MicrophoneRecorder = ({ onTranscription }) => {
             >
                 <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} size="2x" />
             </button>
-            {isRecording && <span> Recording...</span>}
+            {isRecording && <span className="ml-2">Recording...</span>}
         </div>
     );
 };
