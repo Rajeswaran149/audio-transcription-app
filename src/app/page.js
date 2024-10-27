@@ -31,13 +31,13 @@ const Home = () => {
             });
             console.log('response:', response);
 
-            const transcriptionText = response.data.results.channels[0].alternatives[0].transcript;
+            let transcriptionText = response.data.results.channels[0].alternatives[0].transcript;
             console.log('transcriptionText:', transcriptionText);
             setTranscription(transcriptionText);
 
             // Save to history and localStorage
             setTranscriptionsHistory((prevHistory) => {
-                const newHistory = [...prevHistory, transcriptionText];
+                const newHistory = [...prevHistory, transcriptionText].filter(e => e);;
                 localStorage.setItem('transcriptions', JSON.stringify(newHistory));
                 return newHistory;
             });
@@ -50,7 +50,7 @@ const Home = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 p-6">
             <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Audio Transcription App</h1>
             <MicrophoneRecorder onTranscription={handleTranscription} />
             {isTranscribing && <p className="mt-4 text-blue-600">Transcribing...</p>}
@@ -62,7 +62,8 @@ const Home = () => {
             </div>
             <div className="mt-6 w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Past Transcriptions:</h2>
-                <ul className="text-gray-700 text-lg">
+                <ul className="text-gray-700 h-36 text-lg overflow-y-auto">
+                    {console.log(transcriptionsHistory)}
                     {transcriptionsHistory.length > 0 ? (
                         transcriptionsHistory.map((item, index) => (
                             <li key={index} className="border-b py-2">{item}</li>

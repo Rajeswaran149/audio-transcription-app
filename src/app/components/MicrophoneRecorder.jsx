@@ -70,7 +70,7 @@ const MicrophoneRecorder = ({ onTranscription }) => {
             >
                 <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} size="2x" />
             </button>
-            {isRecording && <span className="ml-2">Recording...</span>}
+            {isRecording && <span className="ml-2 text-yellow-300">Recording...</span>}
         </div>
     );
 };
