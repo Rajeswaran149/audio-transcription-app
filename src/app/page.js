@@ -53,7 +53,7 @@ const Home = () => {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 p-6">
             <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Audio Transcription App</h1>
             <MicrophoneRecorder onTranscription={handleTranscription} />
-            {isTranscribing && <p className="mt-4 text-blue-600">Transcribing...</p>}
+            {isTranscribing && <p className="mt-4 text-blue-600 text-2xl">Transcribing...</p>}
             <div className="mt-6 w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Transcription:</h2>
                 <p className="text-gray-700 text-lg whitespace-pre-wrap">

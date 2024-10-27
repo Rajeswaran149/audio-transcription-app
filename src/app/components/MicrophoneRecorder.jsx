@@ -65,12 +65,12 @@ const MicrophoneRecorder = ({ onTranscription }) => {
         <div>
             <button 
                 onClick={toggleRecording} 
-                className={`bg-blue-500 text-white p-2 rounded ${isRecording ? 'bg-red-500' : ''}`}
+                className={`bg-blue-500 hover:${isRecording ? 'bg-red-800' : 'bg-blue-800' } text-white p-2 rounded ${isRecording ? 'bg-red-500' : ''}`}
                 aria-label={isRecording ? 'Stop Recording' : 'Start Recording'}
             >
-                <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} size="2x" />
+                <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} size="4x" />
             </button>
-            {isRecording && <span className="ml-2 text-yellow-300">Recording...</span>}
+            {isRecording && <span className="ml-2 text-yellow-300 text-2xl">Recording...</span>}
         </div>
     );
 };
